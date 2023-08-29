@@ -118,37 +118,50 @@ class LockTests {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static volatile int signal = 1;
+    static class ThreadLocalThreadA implements Runnable {
+        private final ThreadLocal<String> threadLocal;
 
-    static class SignalThreadA implements Runnable {
+        public ThreadLocalThreadA(ThreadLocal<String> threadLocal) {
+            this.threadLocal = threadLocal;
+        }
+
         @Override
         public void run() {
-            while (signal <= END) {
-                if (signal % 2 == 1) {
-                    log.info("Thread A: {}", signal);
-                    signal++;
-                }
+            threadLocal.set("A");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                log.error("exception: ", e);
             }
+            log.info("Thread A: {}", threadLocal.get());
         }
+
     }
 
-    static class SignalThreadB implements Runnable {
+    static class ThreadLocalThreadB implements Runnable {
+        private final ThreadLocal<String> threadLocal;
+
+        public ThreadLocalThreadB(ThreadLocal<String> threadLocal) {
+            this.threadLocal = threadLocal;
+        }
+
         @Override
         public void run() {
-            while (signal <= END) {
-                if (signal % 2 == 0) {
-                    log.info("Thread B: {}", signal);
-                    signal++;
-                }
+            threadLocal.set("B");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                log.error("exception: ", e);
             }
+            log.info("Thread B: {}", threadLocal.get());
         }
     }
 
     @Test
-    public void testSignal() throws InterruptedException {
-        new Thread(new SignalThreadA()).start();
-        Thread.sleep(10L);
-        new Thread(new SignalThreadB()).start();
+    public void testThreadLocal() {
+        ThreadLocal<String> threadLocal = new ThreadLocal<>();
+        new Thread(new ThreadLocalThreadA(threadLocal)).start();
+        new Thread(new ThreadLocalThreadB(threadLocal)).start();
     }
 
 }
