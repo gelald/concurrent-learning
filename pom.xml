@@ -14,6 +14,7 @@
         <module>communications-learning</module>
         <module>lock-learning</module>
         <module>status-learning</module>
+        <module>visible-learning</module>
     </modules>
 
     <properties>
