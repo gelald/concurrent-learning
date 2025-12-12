@@ -1,0 +1,14 @@
+server:
+  port: 19601
+
+global:
+  thread-pool:
+    core-size: 5
+    max-size: 10
+    queue-size: 50
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
