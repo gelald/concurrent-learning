@@ -16,6 +16,7 @@
         <module>status-learning</module>
         <module>visible-learning</module>
         <module>thread-pool-learning</module>
+        <module>issue-learning</module>
     </modules>
 
     <properties>
