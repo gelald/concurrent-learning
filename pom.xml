@@ -18,6 +18,7 @@
         <module>issue-learning</module>
         <module>thread-local-learning</module>
         <module>synchronized-learning</module>
+        <module>aqs-learning</module>
     </modules>
 
     <properties>
