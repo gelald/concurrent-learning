@@ -49,7 +49,7 @@ public class AQSDemo {
         t1.join();
         t2.join();
 
-        System.out.println("主线程结束，锁状态：" + (simpleMutex.isLocked() ? "已锁" : "未锁"));
+        System.out.println("主线程结束，锁是否被释放：" + !simpleMutex.isLocked());
 
         ReentrantMutex reentrantMutex = new ReentrantMutex();
 
@@ -170,7 +170,7 @@ class ReentrantMutex {
         protected boolean tryRelease(int releases) {
             int state = getState() - releases;
             if (Thread.currentThread() != getExclusiveOwnerThread()) {
-                // 非持有者释放
+                // 非持有者释放锁，抛出异常
                 throw new IllegalMonitorStateException();
             }
 
