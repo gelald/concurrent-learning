@@ -27,6 +27,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>3.2.12</spring-boot.version>
+        <jol.version>0.9</jol.version>
     </properties>
 
     <dependencyManagement>
