@@ -10,7 +10,6 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>atomic-learning</module>
         <module>communications-learning</module>
         <module>lock-learning</module>
         <module>status-learning</module>
@@ -19,6 +18,7 @@
         <module>thread-local-learning</module>
         <module>synchronized-learning</module>
         <module>aqs-learning</module>
+        <module>cas-learning</module>
     </modules>
 
     <properties>

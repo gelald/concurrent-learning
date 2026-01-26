@@ -1,30 +1,35 @@
-package com.github.gelald.atomic;
+package com.github.gelald.cas;
 
 import org.springframework.util.StopWatch;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAccumulator;
 import java.util.concurrent.atomic.LongAdder;
 
-/**
- * 原子类累加性能测试
- * 
- * 对比 AtomicInteger、LongAdder 和 LongAccumulator 的性能差异
- * - AtomicInteger: 基于 CAS 操作，高并发下性能较差
- * - LongAdder: 分段累加，高并发下性能更好，适合统计场景
- * - LongAccumulator: 更通用的累加器，支持自定义累加函数
- */
 public class AccumulationTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        int threads = 100;
+        int iterations = 10000;
+
         StopWatch stopWatch = new StopWatch();
-        
         // 测试 AtomicInteger 自增性能
         // 使用 CAS 保证原子性，但在高并发下存在大量失败重试
-        AtomicInteger atomicInteger = new AtomicInteger();
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+
         stopWatch.start("AtomicInteger");
-        for (int i = 0; i < 10000; i++) {
-            atomicInteger.incrementAndGet();
+        for (int i = 0; i < threads; i++) {
+            executor.submit(() -> {
+                for (int j = 0; j < iterations; j++) {
+                    atomicInteger.incrementAndGet();
+                }
+            });
         }
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.MINUTES);
         stopWatch.stop();
         System.out.println("AtomicInteger: " + stopWatch.lastTaskInfo().getTimeMillis());
 
@@ -32,10 +37,18 @@ public class AccumulationTest {
         // 将累加操作分散到多个 Cell 中，最后再合并结果
         // 在高并发场景下性能优于 AtomicInteger
         LongAdder longAdder = new LongAdder();
+        executor = Executors.newFixedThreadPool(threads);
+
         stopWatch.start("LongAdder");
-        for (int i = 0; i < 10000; i++) {
-            longAdder.increment();
+        for (int i = 0; i < threads; i++) {
+            executor.submit(() -> {
+                for (int j = 0; j < iterations; j++) {
+                    longAdder.increment();
+                }
+            });
         }
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.MINUTES);
         stopWatch.stop();
         System.out.println("LongAdder: " + stopWatch.lastTaskInfo().getTimeMillis());
 
